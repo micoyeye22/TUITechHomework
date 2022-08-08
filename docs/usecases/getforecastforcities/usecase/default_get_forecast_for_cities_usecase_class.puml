@@ -1,0 +1,41 @@
+@startuml
+
+interface GetForecastForCitiesUseCase {
+    GetForecastForCities() : ([]CityForecasted, error)
+}
+
+package "src.usecase" {
+    class DefaultGetForecastForCitiesUseCase implements GetForecastForCitiesUseCase {
+        - musementProvider:MusementProvider
+        - weatherProvider:WeatherProvider
+        - forecastedCitiesFormatter:forecastedCitiesFormatter
+        ---
+        + {static} NewDefaultGetForecastForCitiesUseCase(\n musementProvider:MusementProvider,\n weatherProvider:WeatherProvider) : *DefaultGetForecastForCitiesUseCase
+        + GetForecastForCities() : ([]CityForecasted, error)
+    }
+
+    interface MusementProvider {
+        + GetCities() : ([]contracts.City, error)
+    }
+
+    interface WeatherProvider {
+        + GetForecastForCity(cityLat:float64, cityLong:float64) : (contracts.WeatherForecast, error)
+    }
+
+    -interface forecastedCitiesFormatter {
+        + BuildForecastedCity(\n city:contracts.City,\n weatherForecast:contracts.WeatherForecast) : models.CityForecasted
+    }
+
+    package "internal.formatter" {
+        class defaultForecastedCitiesFormatter implements forecastedCitiesFormatter {
+            ---
+            + {static} NewDefaultForecastedCitiesFormatter() : *defaultForecastedCitiesFormatter
+            + BuildForecastedCity(\n city:contracts.City,\n weatherForecast:contracts.WeatherForecast) : models.CityForecasted
+        }
+    }
+}
+
+DefaultGetForecastForCitiesUseCase - MusementProvider
+DefaultGetForecastForCitiesUseCase -- WeatherProvider
+
+@enduml

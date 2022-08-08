@@ -1,6 +1,6 @@
 @startuml
 
-package "weatherapiresponse" {
+package "src.infrastructure.provider.weather.response" {
     note as n1
         include json tags
         in lower camelcase

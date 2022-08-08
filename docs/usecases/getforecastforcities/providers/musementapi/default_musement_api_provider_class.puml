@@ -1,0 +1,60 @@
+@startuml
+
+interface MusementProvider {
+    GetCities() : ([]contracts.City, error)
+}
+
+package "src.infrastructure.providers.musement" {
+    class DefaultMusementProvider implements MusementProvider {
+        - config:MusementProviderClientConfig
+        - restMusementClient:restMusementClient
+        - mapper:musementResponseMapper
+        ---
+        + {static} NewDefaultMusementProvider(config:MusementProviderClientConfig) : *DefaultMusementProvider
+        + GetCities() : ([]contracts.City, error)
+    }
+
+    interface HTTPClient {
+    	Do(req:*http.Request) : (*http.Response, error)
+    }
+
+    interface MusementProviderClientConfig {
+        BaseURL() : string
+        MusementClientToken() : string
+    }
+
+    -interface restMusementClient {
+        GetCitiesRequest() : (MusementAPIResponse, error)
+    }
+
+    -interface musementResponseMapper {
+        ToCityContract(musementAPIResponse:MusementAPIResponse) : contracts.City
+    }
+
+    package "internal" {
+        package "mappers" {
+            class defaultMusementResponseMapper implements musementResponseMapper {
+                ---
+                + {static} NewDefaultMusementResponseMapper() : *defaultMusementResponseMapper
+                + ToCityContract(musementAPIResponse:MusementAPIResponse) : contracts.City
+            }
+        }
+
+        package "client" {
+            class defaultRestMusementClient implements restMusementClient {
+                - config:MusementProviderClientConfig
+                - httpClient:HTTPClient
+                ---
+                + {static} NewDefaultRestMusementClient(config:MusementProviderClientConfig, httpClient:HTTPClient) : *defaultRestMusementClient
+                + GetCitiesRequest() : (MusementAPIResponse, error)
+            }
+        }
+    }
+}
+
+DefaultMusementProvider -- restMusementClient
+DefaultMusementProvider -- musementResponseMapper
+defaultRestMusementClient -- HTTPClient
+defaultRestMusementClient -- MusementProviderClientConfig
+
+@enduml

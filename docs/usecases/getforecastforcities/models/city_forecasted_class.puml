@@ -1,6 +1,6 @@
 @startuml
 
-package "models"{
+package "src.models"{
     class CityForecasted {
         + Name:string
         + Forecasts:[]Forecast

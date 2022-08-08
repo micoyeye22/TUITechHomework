@@ -1,6 +1,6 @@
 @startuml
 
-package "musementapiresponse" {
+package "src.infrastructure.provider.musement.response" {
     note as n1
         include json tags
         in lower camelcase
