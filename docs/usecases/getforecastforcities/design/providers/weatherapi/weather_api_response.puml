@@ -1,0 +1,34 @@
+@startuml
+
+package "weatherapiresponse" {
+    note as n1
+        include json tags
+        in lower camelcase
+    end note
+
+    class WeatherAPIResponse {
+        + Forecast:Forecast
+    }
+
+    class Forecast {
+        + Forecastday:[]Forecastday
+    }
+
+    class Forecastday {
+        + Day:Day
+    }
+
+    class Day {
+        + Condition
+    }
+
+    class Condition {
+        + Text:string
+    }
+}
+WeatherAPIResponse - Forecast
+Forecast o-- Forecastday
+Forecastday -- Day
+Day -- Condition
+
+@enduml
