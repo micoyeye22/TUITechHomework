@@ -1,0 +1,17 @@
+@startuml
+
+package "models"{
+    class CityForecasted {
+        + Name:string
+        + Forecasts:[]Forecast
+    }
+
+    class Forecast {
+        + Order:int
+        + Description:string
+    }
+}
+
+CityForecasted o-- Forecast
+
+@enduml
