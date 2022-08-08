@@ -1,0 +1,22 @@
+@startuml
+
+actor Caller as C
+participant DefaultWeatherAPIProvider as DWAP
+participant "<<private interface>>\nrestWeatherClient" as RC
+participant "<<private interface>>\nweatherResponseMapper" as M
+
+C -> DWAP : GetForecastForCity(cityLat:float64, cityLong:float64)
+activate DWAP
+    DWAP -> RC : GetForecastForCityRequest(cityLat:float64, cityLong:float64)
+    activate RC
+    return (weatherAPIResponse:WeatherAPIResponse, reqErr:error)
+    break reqErr != nil
+        DWAP --> C : interface{}, reqErr.Wrap("error making request to weatherAPI")
+    end
+    DWAP -> M : ToWeatherForecastContract(weatherAPIResponse)
+    activate M
+    return weatherForecast
+    DWAP --> C : weatherForecast, nil
+deactivate
+
+@enduml

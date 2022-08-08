@@ -1,0 +1,13 @@
+@startuml
+
+actor Caller as C
+participant defaultRestWeatherClient as RC
+participant weatherAPI as A
+
+C -> RC ++: GetForecastForCityRequest(cityLat:float64, cityLong:float64)
+    RC -> RC: baseURL := this.config.BaseURL()\\
+    RC -> A ++:curl --request GET \\ \
+                 \n   --url **{baseURL}**/forecast.json?key=**{this.config.WeatherClientToken}**&q=**{cityLat}**,**{cityLong}**&days=**{this.config.ForecastDays}**
+    return response:models.WeatherAPIResponse, reqErr:error
+return response, reqErr
+@enduml
