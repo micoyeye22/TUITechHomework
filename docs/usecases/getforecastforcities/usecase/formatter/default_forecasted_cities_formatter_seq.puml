@@ -1,0 +1,16 @@
+@startuml
+
+actor Caller as C
+participant defaultForecastedCitiesFormatter as DFCF
+
+C -> DFCF : BuildForecastedCity(\n city:contracts.City,\n weatherForecast:contracts.WeatherForecast)
+activate DFCF
+    DFCF -> DFCF : cityForecasted := models.CityForecasted{\n Name: city.Name,\n}
+    loop weatherForecast.Forecastday
+        DFCF -> DFCF : forecast := models.Forecast{\n Order: index,\n Description: forecastday.Day.Condition.Text,\n}
+        DFCF -> DFCF :cityForecasted.Forecasts.append(forecast)
+    end
+    DFCF --> C : cityForecasted
+deactivate
+
+@enduml

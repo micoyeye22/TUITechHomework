@@ -1,0 +1,19 @@
+@startuml
+'https://plantuml.com/en/component-diagram'
+
+() "MusementAPI" as MAPI
+() "WeatherAPI" as WAPI
+
+package "CLIApp" {
+    [musement] as APP
+}
+
+APP --right--> MAPI : GET \n /cities
+MAPI ..left..> APP : []cities
+note right of MAPI : GET : {baseURL}/cities
+
+APP ----> WAPI : GET \n /forecast/{city}
+WAPI ...> APP : cityForecast
+note right of WAPI : GET : {baseURL}/forecast.json?key={key}&q={lat},{long}&days=2
+
+@enduml

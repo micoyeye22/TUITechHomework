@@ -1,0 +1,61 @@
+@startuml
+
+interface WeatherProvider {
+    GetCities() : ([]contracts.City, error)
+}
+
+package "src.infrastructure.providers.weather" {
+    class DefaultWeatherProvider implements WeatherProvider {
+        - config:WeatherProviderClientConfig
+        - restWeatherClient:restWeatherClient
+        - mapper:weatherResponseMapper
+        ---
+        + {static} NewDefaultWeatherProvider(config:WeatherProviderClientConfig) : *DefaultWeatherProvider
+        + GetForecastForCity(cityLat:float64, cityLong:float64) : (contracts.WeatherForecast, error)
+    }
+
+    interface HTTPClient {
+    	Do(req:*http.Request) : (*http.Response, error)
+    }
+
+    interface WeatherProviderClientConfig {
+        BaseURL() : string
+        WeatherClientToken() : string
+        ForecastDays() : int
+    }
+
+    -interface restWeatherClient {
+        GetForecastForCityRequest(cityLat:float64, cityLong:float64) : (WeatherAPIResponse, error)
+    }
+
+    -interface weatherResponseMapper {
+        ToWeatherForecastContract(weatherAPIResponse:WeatherAPIResponse) : contracts.WeatherForecast
+    }
+
+    package "internal" {
+        package "mappers" {
+            class defaultWeatherResponseMapper implements weatherResponseMapper {
+                ---
+                + {static} NewDefaultWeatherResponseMapper() : *defaultWeatherResponseMapper
+                + ToWeatherForecastContract(weatherAPIResponse:WeatherAPIResponse) : contracts.WeatherForecast
+            }
+        }
+
+        package "client" {
+            class defaultRestWeatherClient implements restWeatherClient {
+                - config:WeatherProviderClientConfig
+                - httpClient:HTTPClient
+                ---
+                + {static} NewDefaultRestWeatherClient(config:WeatherProviderClientConfig, httpClient:HTTPClient) : *defaultRestWeatherClient
+                + GetForecastForCityRequest(cityLat:float64, cityLong:float64) : (WeatherAPIResponse, error)
+            }
+        }
+    }
+}
+
+DefaultWeatherProvider -- restWeatherClient
+DefaultWeatherProvider -- weatherResponseMapper
+defaultRestWeatherClient -- HTTPClient
+defaultRestWeatherClient -- WeatherProviderClientConfig
+
+@enduml
