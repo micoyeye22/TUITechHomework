@@ -10,7 +10,7 @@ package "src.infrastructure.providers.musement" {
         - restMusementClient:restMusementClient
         - mapper:musementResponseMapper
         ---
-        + {static} NewDefaultMusementProvider(config:MusementProviderClientConfig) : *DefaultMusementProvider
+        + {static} NewDefaultMusementProvider(config:MusementProviderClientConfig,\n httpClient:HTTPClient) : *DefaultMusementProvider
         + GetCities() : ([]contracts.City, error)
     }
 
@@ -28,7 +28,7 @@ package "src.infrastructure.providers.musement" {
     }
 
     -interface musementResponseMapper {
-        ToCityContract(musementAPIResponse:MusementAPIResponse) : contracts.City
+        ToCityContract(responseCity:response.City) : contracts.City
     }
 
     package "internal" {
@@ -36,7 +36,7 @@ package "src.infrastructure.providers.musement" {
             class defaultMusementResponseMapper implements musementResponseMapper {
                 ---
                 + {static} NewDefaultMusementResponseMapper() : *defaultMusementResponseMapper
-                + ToCityContract(musementAPIResponse:MusementAPIResponse) : contracts.City
+                + ToCityContract(responseCity:response.City) : contracts.City
             }
         }
 
