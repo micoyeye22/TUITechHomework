@@ -1,6 +1,6 @@
 @startuml
 
-package "src.contracts"{
+package "src.internal.core.contracts"{
     class City {
         + Id:int
         + Name:string
