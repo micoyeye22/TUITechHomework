@@ -1,8 +1,8 @@
 @startuml
 
-package "src.contracts"{
+package "src.internal.core.contracts"{
     class WeatherForecast {
-        + Forecastday:[]Forecastday
+        + Forecastdays:[]Forecastday
     }
 
     class Forecastday {
