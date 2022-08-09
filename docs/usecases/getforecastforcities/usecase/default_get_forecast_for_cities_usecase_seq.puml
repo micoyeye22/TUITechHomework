@@ -12,19 +12,19 @@ activate UC
     activate MP
     return (cities:[]contracts.City, musementErr:error)
     break musementErr != nil
-        UC --> C : interface{}, error.Wrap(musementErr, "error getting cities")
+        UC --> C : nil, error.Wrap(musementErr, "error getting cities")
     end
     UC -> UC : var forecastedCities []CityForecasted
     loop cities
         UC -> WP : GetForecastForCity(city.Latitude, city.Longitude)
         activate WP
         return (weatherForecast:contracts.WeatherForecast, weatherErr:error)
-        alt error != nil
+        alt error == nil
             UC -> FCF : BuildForecastedCity(city, weatherForecast)
             activate FCF
             return forecastedCity:CityForecasted
+            UC -> UC : forecastedCities.append(forecastedCity)
         end
-        UC -> UC : forecastedCities.append(forecastedCity)
     end
     UC --> C : forecastedCities, nil
 deactivate
