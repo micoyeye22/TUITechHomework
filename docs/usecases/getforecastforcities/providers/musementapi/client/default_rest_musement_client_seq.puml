@@ -8,10 +8,7 @@ C -> RC ++: GetCitiesRequest()
     RC -> RC: baseURL := this.config.BaseURL()\
 
     RC -> A ++:curl --request GET \\ \
-                 \n   --url **{baseURL}**/cities \\ \
-                 \n   --header 'X-Musement-Application: {applicationValue}' \\ \
-                 \n   --header 'X-Musement-Version: 3.4.0' \\ \
-                 \n   --header 'Authorization: Bearer **{this.config.MusementClientToken()}**'
+                 \n   --url **{baseURL}**/cities
     return response:models.MusementAPIResponse, reqErr:error
 return response, reqErr
 @enduml
