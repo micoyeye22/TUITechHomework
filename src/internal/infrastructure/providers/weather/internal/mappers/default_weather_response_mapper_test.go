@@ -3,7 +3,7 @@ package mappers
 import (
 	"github.com/stretchr/testify/assert"
 	"musement/src/internal/core/contracts"
-	"musement/src/internal/infrastructure/providers/weatherapi/internal/response"
+	"musement/src/internal/infrastructure/providers/weather/internal/response"
 	"testing"
 )
 

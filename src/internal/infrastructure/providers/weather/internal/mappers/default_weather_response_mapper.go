@@ -2,7 +2,7 @@ package mappers
 
 import (
 	"musement/src/internal/core/contracts"
-	"musement/src/internal/infrastructure/providers/weatherapi/internal/response"
+	"musement/src/internal/infrastructure/providers/weather/internal/response"
 )
 
 type defaultWeatherResponseMapper struct {

@@ -3,7 +3,7 @@ package client
 import (
 	"encoding/json"
 	"fmt"
-	"musement/src/internal/infrastructure/providers/weatherapi/internal/response"
+	"musement/src/internal/infrastructure/providers/weather/internal/response"
 	"net/http"
 	"testing"
 

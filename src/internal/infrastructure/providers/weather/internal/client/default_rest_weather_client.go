@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"musement/src/internal/infrastructure/providers/weatherapi/internal/response"
+	"musement/src/internal/infrastructure/providers/weather/internal/response"
 	"net/http"
 
 	"github.com/pkg/errors"
