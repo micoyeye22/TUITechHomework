@@ -11,7 +11,7 @@ package "src.infrastructure.provider.weather.response" {
     }
 
     class Forecast {
-        + Forecastday:[]Forecastday
+        + Forecastdays:[]Forecastday
     }
 
     class Forecastday {
