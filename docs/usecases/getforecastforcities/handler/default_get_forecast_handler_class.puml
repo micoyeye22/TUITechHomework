@@ -1,0 +1,53 @@
+@startuml
+
+interface GetForecastHandler {
+    HandleGetForecast() : error
+}
+
+package "infrastructure.entrypoints.cmd" {
+    class DefaultGetForecastHandler implements GetForecastHandler {
+        - useCase:GetForecastForCitiesUseCase
+        - responseFormatter:responseFormatter
+        - responsePrinter:responsePrinter
+        ---
+        + {static} NewDefaultGetForecastHandler(useCase:GetForecastForCitiesUseCase) : *DefaultGetForecastHandler
+        + HandleGetForecast() : error
+    }
+
+    interface GetForecastForCitiesUseCase {
+        GetForecastForCities() : ([]models.CityForecasted, error)
+    }
+
+    -interface responseFormatter {
+        FormatCitiesForecasted(cityForecasted:models.CityForecasted) : string
+    }
+
+    -interface responsePrinter {
+        PrintCity(cityFormatted:string)
+    }
+
+    package "internal" {
+        package "formatters" {
+            class defaultResponseFormatter implements responseFormatter {
+                - {static} const responseFormat:string ("Processed city %s | %s - %s")
+                ---
+                + {static} NewDefaultResponseFormatter() : *defaultResponseFormatter
+                + FormatCitiesForecasted(cityForecasted:models.CityForecasted) : string
+            }
+        }
+
+        package "printers" {
+            class defaultResponsePrinter implements responsePrinter {
+                ---
+                + {static} NewDefaultResponsePrinter() : *defaultResponsePrinter
+                + PrintCity((cityFormatted:string)
+            }
+        }
+    }
+}
+
+DefaultGetForecastHandler - GetForecastForCitiesUseCase
+DefaultGetForecastHandler -- responseFormatter
+DefaultGetForecastHandler -- responsePrinter
+
+@enduml
