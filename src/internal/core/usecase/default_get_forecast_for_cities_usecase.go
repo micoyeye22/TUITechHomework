@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"log"
 	"musement/src/internal/core/contracts"
 	"musement/src/internal/core/domain/models"
 	"musement/src/internal/core/usecase/internal/formatter"
@@ -47,6 +48,8 @@ func (uc *DefaultGetForecastForCitiesUseCase) GetForecastForCities() ([]models.C
 		if weatherErr == nil {
 			forecastedCity := uc.forecastedCitiesFormatter.BuildForecastedCity(city, weatherForecast)
 			forecastedCities = append(forecastedCities, forecastedCity)
+		} else {
+			log.Print(errors.Wrapf(weatherErr, "error getting forecast for city %s", city.Name))
 		}
 	}
 	return forecastedCities, nil

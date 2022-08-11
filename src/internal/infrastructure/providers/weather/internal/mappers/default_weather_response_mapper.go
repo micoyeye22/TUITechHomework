@@ -14,10 +14,11 @@ func NewDefaultWeatherResponseMapper() *defaultWeatherResponseMapper {
 
 func (m *defaultWeatherResponseMapper) ToWeatherForecastContract(
 	weatherAPIResponse response.WeatherAPIResponse) contracts.WeatherForecast {
-	var forecastdays []contracts.Forecastday
+	forecastdays := make([]contracts.Forecastday, 0, len(weatherAPIResponse.Forecast.Forecastdays))
 	for _, forecastday := range weatherAPIResponse.Forecast.Forecastdays {
 		forecastdays = append(forecastdays, m.toForecastdayContract(forecastday))
 	}
+
 	return contracts.WeatherForecast{
 		Forecastdays: forecastdays,
 	}
