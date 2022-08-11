@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/json"
 	"fmt"
+	"musement/src/internal/infrastructure/providers/weather/config"
 	"musement/src/internal/infrastructure/providers/weather/internal/response"
 	"net/http"
 	"testing"
@@ -33,15 +34,14 @@ func TestNewDefaultRestWeatherClient(t *testing.T) {
 
 func TestDefaultRestWeatherClient_GetForecastForCityRequest_success(t *testing.T) {
 	_, mockConfig, restWeatherClient := givenADefaultRestWeatherClientWithMockedComponents()
+	weatherRestClientConfig := givenAWeatherRestClientConfig(testBaseURL)
 
 	expectedWeatherAPIResponse := givenAGetForecastForCityRequestResponse()
 
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	mockConfig.On("BaseURL").Return(testBaseURL)
-	mockConfig.On("WeatherClientToken").Return(testToken)
-	mockConfig.On("ForecastDays").Return(testForecastDays)
+	mockConfig.On("WeatherProviderClientConfig").Return(weatherRestClientConfig)
 	whenGetForecastForCityRequestReturnsResponse(http.StatusOK, expectedWeatherAPIResponse)
 
 	actualWeatherAPIResponse, err := restWeatherClient.GetForecastForCityRequest(testCityLatitude, testCityLongitude)
@@ -53,14 +53,13 @@ func TestDefaultRestWeatherClient_GetForecastForCityRequest_success(t *testing.T
 
 func TestDefaultRestWeatherClient_GetForecastForCityRequest_whenBuildingRequestFailsThenReturnsError(t *testing.T) {
 	_, mockConfig, restWeatherClient := givenADefaultRestWeatherClientWithMockedComponents()
+	weatherRestClientConfig := givenAWeatherRestClientConfig(testInvalidBaseURL)
 
 	expectedErrorMessage := fmt.Sprintf(
 		"error building request to get forecast for city with latitude %v and longitude %v",
 		testCityLatitude, testCityLongitude)
 
-	mockConfig.On("BaseURL").Return(testInvalidBaseURL)
-	mockConfig.On("WeatherClientToken").Return(testToken)
-	mockConfig.On("ForecastDays").Return(testForecastDays)
+	mockConfig.On("WeatherProviderClientConfig").Return(weatherRestClientConfig)
 
 	_, err := restWeatherClient.GetForecastForCityRequest(testCityLatitude, testCityLongitude)
 
@@ -71,6 +70,7 @@ func TestDefaultRestWeatherClient_GetForecastForCityRequest_whenBuildingRequestF
 
 func TestDefaultRestWeatherClient_GetForecastForCityRequest_whenClientFailsThenReturnsError(t *testing.T) {
 	_, mockConfig, restWeatherClient := givenADefaultRestWeatherClientWithMockedComponents()
+	weatherRestClientConfig := givenAWeatherRestClientConfig(testBaseURL)
 
 	expectedErrorMessage := fmt.Sprintf(
 		"error doing request to get forecast for city with latitude %v and longitude %v",
@@ -78,9 +78,7 @@ func TestDefaultRestWeatherClient_GetForecastForCityRequest_whenClientFailsThenR
 
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	mockConfig.On("BaseURL").Return(testBaseURL)
-	mockConfig.On("WeatherClientToken").Return(testToken)
-	mockConfig.On("ForecastDays").Return(testForecastDays)
+	mockConfig.On("WeatherProviderClientConfig").Return(weatherRestClientConfig)
 
 	_, err := restWeatherClient.GetForecastForCityRequest(testCityLatitude, testCityLongitude)
 
@@ -91,6 +89,7 @@ func TestDefaultRestWeatherClient_GetForecastForCityRequest_whenClientFailsThenR
 
 func TestDefaultRestWeatherClient_GetForecastForCityRequest_whenResponseHasInvalidStatusThenReturnsError(t *testing.T) {
 	_, mockConfig, restWeatherClient := givenADefaultRestWeatherClientWithMockedComponents()
+	weatherRestClientConfig := givenAWeatherRestClientConfig(testBaseURL)
 
 	httpStatus := http.StatusBadRequest
 	responseStruct := response.WeatherAPIResponse{}
@@ -102,9 +101,7 @@ func TestDefaultRestWeatherClient_GetForecastForCityRequest_whenResponseHasInval
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	mockConfig.On("BaseURL").Return(testBaseURL)
-	mockConfig.On("WeatherClientToken").Return(testToken)
-	mockConfig.On("ForecastDays").Return(testForecastDays)
+	mockConfig.On("WeatherProviderClientConfig").Return(weatherRestClientConfig)
 	whenGetForecastForCityRequestReturnsResponse(httpStatus, responseStruct)
 
 	_, err := restWeatherClient.GetForecastForCityRequest(testCityLatitude, testCityLongitude)
@@ -118,6 +115,14 @@ func givenAResponseBodyString(t *testing.T, weatherAPIResponse response.WeatherA
 	responseBodyBytes, marshallErr := json.Marshal(weatherAPIResponse)
 	require.NoError(t, marshallErr)
 	return string(responseBodyBytes)
+}
+
+func givenAWeatherRestClientConfig(url string) config.WeatherProviderClientConfig {
+	return config.WeatherProviderClientConfig{
+		BaseURL:            url,
+		WeatherClientToken: testToken,
+		ForecastDays:       testForecastDays,
+	}
 }
 
 func whenGetForecastForCityRequestReturnsResponse(status int, weatherAPIResponse response.WeatherAPIResponse) {
@@ -168,8 +173,8 @@ func givenADefaultRestWeatherClientWithMockedComponents() (*http.Client, *MockCo
 	mockConfig := new(MockConfig)
 
 	restWeatherClient := &defaultRestWeatherClient{
-		weatherProviderClientConfig: mockConfig,
-		httpClient:                  httpClient,
+		config:     mockConfig,
+		httpClient: httpClient,
 	}
 
 	return httpClient, mockConfig, restWeatherClient
