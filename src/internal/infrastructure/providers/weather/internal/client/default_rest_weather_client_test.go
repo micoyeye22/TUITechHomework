@@ -1,7 +1,6 @@
 package client
 
 import (
-	"encoding/json"
 	"fmt"
 	"musement/src/internal/infrastructure/providers/weather/config"
 	"musement/src/internal/infrastructure/providers/weather/internal/response"
@@ -10,7 +9,6 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -18,6 +16,7 @@ const (
 	testInvalidBaseURL = "$%&!invalidURL/!%$&"
 	testCityLatitude   = 48.5
 	testCityLongitude  = 20.1
+	testTokenEnvName   = "tokenEnv"
 	testToken          = "asd123"
 	testForecastDays   = 2
 	testConditionText  = "Sunny"
@@ -42,7 +41,7 @@ func TestDefaultRestWeatherClient_GetForecastForCityRequest_success(t *testing.T
 	defer httpmock.DeactivateAndReset()
 
 	mockConfig.On("WeatherProviderClientConfig").Return(weatherRestClientConfig)
-	whenGetForecastForCityRequestReturnsResponse(http.StatusOK, expectedWeatherAPIResponse)
+	whenGetForecastForCityRequestReturnsResponse(t, http.StatusOK, expectedWeatherAPIResponse)
 
 	actualWeatherAPIResponse, err := restWeatherClient.GetForecastForCityRequest(testCityLatitude, testCityLongitude)
 
@@ -93,16 +92,14 @@ func TestDefaultRestWeatherClient_GetForecastForCityRequest_whenResponseHasInval
 
 	httpStatus := http.StatusBadRequest
 	responseStruct := response.WeatherAPIResponse{}
-	responseBody := givenAResponseBodyString(t, responseStruct)
 
-	expectedErrorMessage := fmt.Sprintf("invalid status in response getting forecast code '%d' and body '%s'",
-		httpStatus, responseBody)
+	expectedErrorMessage := fmt.Sprintf("invalid status in response getting forecast code '%d'", httpStatus)
 
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
 	mockConfig.On("WeatherProviderClientConfig").Return(weatherRestClientConfig)
-	whenGetForecastForCityRequestReturnsResponse(httpStatus, responseStruct)
+	whenGetForecastForCityRequestReturnsResponse(t, httpStatus, responseStruct)
 
 	_, err := restWeatherClient.GetForecastForCityRequest(testCityLatitude, testCityLongitude)
 
@@ -111,21 +108,16 @@ func TestDefaultRestWeatherClient_GetForecastForCityRequest_whenResponseHasInval
 	mockConfig.AssertExpectations(t)
 }
 
-func givenAResponseBodyString(t *testing.T, weatherAPIResponse response.WeatherAPIResponse) string {
-	responseBodyBytes, marshallErr := json.Marshal(weatherAPIResponse)
-	require.NoError(t, marshallErr)
-	return string(responseBodyBytes)
-}
-
 func givenAWeatherRestClientConfig(url string) config.WeatherProviderClientConfig {
 	return config.WeatherProviderClientConfig{
 		BaseURL:            url,
-		WeatherClientToken: testToken,
+		WeatherClientToken: testTokenEnvName,
 		ForecastDays:       testForecastDays,
 	}
 }
 
-func whenGetForecastForCityRequestReturnsResponse(status int, weatherAPIResponse response.WeatherAPIResponse) {
+func whenGetForecastForCityRequestReturnsResponse(t *testing.T, status int, weatherAPIResponse response.WeatherAPIResponse) {
+	t.Setenv(testTokenEnvName, testToken)
 	httpMockURL := fmt.Sprintf("%s/forecast.json?key=%s&q=%v,%v&days=%d",
 		testBaseURL, testToken, testCityLatitude, testCityLongitude, testForecastDays)
 

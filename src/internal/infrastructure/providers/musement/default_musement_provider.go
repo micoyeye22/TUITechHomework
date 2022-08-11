@@ -1,13 +1,14 @@
 package musement
 
 import (
-	"github.com/pkg/errors"
 	"musement/src/internal/core/contracts"
 	"musement/src/internal/infrastructure/providers/musement/config"
 	"musement/src/internal/infrastructure/providers/musement/internal/client"
 	"musement/src/internal/infrastructure/providers/musement/internal/mappers"
 	"musement/src/internal/infrastructure/providers/musement/internal/response"
 	"net/http"
+
+	"github.com/pkg/errors"
 )
 
 type HTTPClient interface {
@@ -44,7 +45,7 @@ func (p *DefaultMusementProvider) GetCities() ([]contracts.City, error) {
 		return nil, errors.Wrap(reqErr, "error making request to musementAPI")
 	}
 
-	var cities []contracts.City
+	cities := make([]contracts.City, 0, len(musementAPIResponse.Cities))
 	for _, city := range musementAPIResponse.Cities {
 		cityContract := p.mapper.ToCityContract(city)
 		cities = append(cities, cityContract)

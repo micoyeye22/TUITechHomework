@@ -1,10 +1,11 @@
 package mappers
 
 import (
-	"github.com/stretchr/testify/assert"
 	"musement/src/internal/core/contracts"
 	"musement/src/internal/infrastructure/providers/weather/internal/response"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 const (

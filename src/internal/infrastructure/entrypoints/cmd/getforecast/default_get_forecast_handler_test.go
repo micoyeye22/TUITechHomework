@@ -1,12 +1,12 @@
 package getforecast
 
 import (
-	"github.com/pkg/errors"
 	"musement/src/internal/core/domain/models"
 	"musement/src/internal/infrastructure/entrypoints/cmd/getforecast/internal/formatters"
 	"musement/src/internal/infrastructure/entrypoints/cmd/getforecast/internal/printers"
 	"testing"
 
+	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )
 

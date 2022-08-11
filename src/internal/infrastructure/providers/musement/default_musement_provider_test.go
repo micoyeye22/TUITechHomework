@@ -2,13 +2,14 @@ package musement
 
 import (
 	"errors"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"musement/src/internal/core/contracts"
 	"musement/src/internal/infrastructure/providers/musement/internal/client"
 	"musement/src/internal/infrastructure/providers/musement/internal/mappers"
 	"musement/src/internal/infrastructure/providers/musement/internal/response"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 const (

@@ -1,14 +1,14 @@
 package usecase
 
 import (
-	"github.com/pkg/errors"
-	"github.com/stretchr/testify/mock"
 	"musement/src/internal/core/contracts"
 	"musement/src/internal/core/domain/models"
 	"musement/src/internal/core/usecase/internal/formatter"
 	"testing"
 
+	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 const (
