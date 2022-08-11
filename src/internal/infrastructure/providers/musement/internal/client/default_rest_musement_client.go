@@ -4,14 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"musement/src/internal/infrastructure/providers/musement/config"
 	"musement/src/internal/infrastructure/providers/musement/internal/response"
 	"net/http"
 
 	"github.com/pkg/errors"
 )
 
-type MusementProviderClientConfig interface {
-	BaseURL() string
+type Config interface {
+	MusementProviderClientConfig() config.MusementProviderClientConfig
 }
 
 type HTTPClient interface {
@@ -19,19 +20,19 @@ type HTTPClient interface {
 }
 
 type defaultRestMusementClient struct {
-	musementProviderClientConfig MusementProviderClientConfig
-	httpClient                   HTTPClient
+	config     Config
+	httpClient HTTPClient
 }
 
-func NewDefaultRestMusementClient(config MusementProviderClientConfig, httpClient HTTPClient) *defaultRestMusementClient {
+func NewDefaultRestMusementClient(config Config, httpClient HTTPClient) *defaultRestMusementClient {
 	return &defaultRestMusementClient{
-		musementProviderClientConfig: config,
-		httpClient:                   httpClient,
+		config:     config,
+		httpClient: httpClient,
 	}
 }
 
 func (rc *defaultRestMusementClient) GetCitiesRequest() (response.MusementAPIResponse, error) {
-	baseURL := rc.musementProviderClientConfig.BaseURL()
+	baseURL := rc.config.MusementProviderClientConfig().BaseURL
 
 	url := fmt.Sprintf("%s/cities", baseURL)
 

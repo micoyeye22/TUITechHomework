@@ -2,6 +2,7 @@ package weather
 
 import (
 	"musement/src/internal/core/contracts"
+	"musement/src/internal/infrastructure/providers/weather/config"
 	"musement/src/internal/infrastructure/providers/weather/internal/client"
 	"musement/src/internal/infrastructure/providers/weather/internal/mappers"
 	"musement/src/internal/infrastructure/providers/weather/internal/response"
@@ -14,10 +15,8 @@ type HTTPClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
-type WeatherProviderClientConfig interface {
-	BaseURL() string
-	WeatherClientToken() string
-	ForecastDays() int
+type Config interface {
+	WeatherProviderClientConfig() config.WeatherProviderClientConfig
 }
 
 type restWeatherClient interface {
@@ -33,7 +32,7 @@ type DefaultWeatherProvider struct {
 	mapper            weatherResponseMapper
 }
 
-func NewDefaultWeatherProvider(config WeatherProviderClientConfig, httpClient HTTPClient) *DefaultWeatherProvider {
+func NewDefaultWeatherProvider(config Config, httpClient HTTPClient) *DefaultWeatherProvider {
 	return &DefaultWeatherProvider{
 		restWeatherClient: client.NewDefaultRestWeatherClient(config, httpClient),
 		mapper:            mappers.NewDefaultWeatherResponseMapper(),

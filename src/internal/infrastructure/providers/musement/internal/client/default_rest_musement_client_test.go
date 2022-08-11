@@ -3,12 +3,14 @@ package client
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/jarcoal/httpmock"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
+	"musement/src/internal/infrastructure/providers/musement/config"
 	"musement/src/internal/infrastructure/providers/musement/internal/response"
 	"net/http"
 	"testing"
+
+	"github.com/jarcoal/httpmock"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -21,7 +23,7 @@ const (
 )
 
 func TestNewDefaultRestMusementClient(t *testing.T) {
-	httpClient, mockConfig, expectedRestMusementClient := givenADefaultRestMusementClientWithMockecComponents()
+	httpClient, mockConfig, expectedRestMusementClient := givenADefaultRestMusementClientWithMockedComponents()
 
 	actualRestMusementClient := NewDefaultRestMusementClient(mockConfig, httpClient)
 
@@ -30,14 +32,15 @@ func TestNewDefaultRestMusementClient(t *testing.T) {
 }
 
 func TestDefaultRestMusementClient_GetCitiesRequest_success(t *testing.T) {
-	_, mockConfig, restMusementClient := givenADefaultRestMusementClientWithMockecComponents()
+	_, mockConfig, restMusementClient := givenADefaultRestMusementClientWithMockedComponents()
+	musementRestClientConfig := givenAMusementRestClientConfig(testBaseURL)
 
 	expectedMusementAPIResponse := givenAGetCitiesRequestResponse()
 
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	mockConfig.On("BaseURL").Return(testBaseURL)
+	mockConfig.On("MusementProviderClientConfig").Return(musementRestClientConfig)
 	whenGetCitiesRequestReturnsResponse(http.StatusOK, expectedMusementAPIResponse)
 
 	actualMusementAPIResponse, err := restMusementClient.GetCitiesRequest()
@@ -48,11 +51,12 @@ func TestDefaultRestMusementClient_GetCitiesRequest_success(t *testing.T) {
 }
 
 func TestDefaultRestMusementClient_GetCitiesRequest_whenBuildingRequestFailsThenReturnsError(t *testing.T) {
-	_, mockConfig, restMusementClient := givenADefaultRestMusementClientWithMockecComponents()
+	_, mockConfig, restMusementClient := givenADefaultRestMusementClientWithMockedComponents()
+	musementRestClientConfig := givenAMusementRestClientConfig(testInvalidBaseURL)
 
 	expectedErrorMessage := "error building request to get cities"
 
-	mockConfig.On("BaseURL").Return(testInvalidBaseURL)
+	mockConfig.On("MusementProviderClientConfig").Return(musementRestClientConfig)
 
 	_, err := restMusementClient.GetCitiesRequest()
 
@@ -62,13 +66,14 @@ func TestDefaultRestMusementClient_GetCitiesRequest_whenBuildingRequestFailsThen
 }
 
 func TestDefaultRestMusementClient_GetCitiesRequest_whenClientFailsThenReturnsError(t *testing.T) {
-	_, mockConfig, restMusementClient := givenADefaultRestMusementClientWithMockecComponents()
+	_, mockConfig, restMusementClient := givenADefaultRestMusementClientWithMockedComponents()
+	musementRestClientConfig := givenAMusementRestClientConfig(testBaseURL)
 
 	expectedErrorMessage := "error doing request to get cities"
 
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	mockConfig.On("BaseURL").Return(testBaseURL)
+	mockConfig.On("MusementProviderClientConfig").Return(musementRestClientConfig)
 
 	_, err := restMusementClient.GetCitiesRequest()
 
@@ -78,7 +83,8 @@ func TestDefaultRestMusementClient_GetCitiesRequest_whenClientFailsThenReturnsEr
 }
 
 func TestDefaultRestMusementClient_GetCitiesRequest_whenResponseHasInvalidStatusThenReturnsError(t *testing.T) {
-	_, mockConfig, restMusementClient := givenADefaultRestMusementClientWithMockecComponents()
+	_, mockConfig, restMusementClient := givenADefaultRestMusementClientWithMockedComponents()
+	musementRestClientConfig := givenAMusementRestClientConfig(testBaseURL)
 
 	httpStatus := http.StatusBadRequest
 	responseStruct := response.MusementAPIResponse{}
@@ -90,7 +96,7 @@ func TestDefaultRestMusementClient_GetCitiesRequest_whenResponseHasInvalidStatus
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	mockConfig.On("BaseURL").Return(testBaseURL)
+	mockConfig.On("MusementProviderClientConfig").Return(musementRestClientConfig)
 	whenGetCitiesRequestReturnsResponse(httpStatus, responseStruct)
 
 	_, err := restMusementClient.GetCitiesRequest()
@@ -104,6 +110,12 @@ func givenAResponseBodyString(t *testing.T, musementAPIResponse response.Musemen
 	responseBodyBytes, marshallErr := json.Marshal(musementAPIResponse)
 	require.NoError(t, marshallErr)
 	return string(responseBodyBytes)
+}
+
+func givenAMusementRestClientConfig(url string) config.MusementProviderClientConfig {
+	return config.MusementProviderClientConfig{
+		BaseURL: url,
+	}
 }
 
 func whenGetCitiesRequestReturnsResponse(status int, musementAPIResponse response.MusementAPIResponse) {
@@ -134,13 +146,13 @@ func givenACityResponse() response.City {
 	}
 }
 
-func givenADefaultRestMusementClientWithMockecComponents() (*http.Client, *MockConfig, *defaultRestMusementClient) {
+func givenADefaultRestMusementClientWithMockedComponents() (*http.Client, *MockConfig, *defaultRestMusementClient) {
 	httpClient := http.DefaultClient
 	mockConfig := new(MockConfig)
 
 	restMusementClient := &defaultRestMusementClient{
-		musementProviderClientConfig: mockConfig,
-		httpClient:                   httpClient,
+		config:     mockConfig,
+		httpClient: httpClient,
 	}
 
 	return httpClient, mockConfig, restMusementClient
