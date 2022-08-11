@@ -3,10 +3,10 @@ package client
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"musement/src/internal/infrastructure/providers/weather/config"
 	"musement/src/internal/infrastructure/providers/weather/internal/response"
 	"net/http"
+	"os"
 
 	"github.com/pkg/errors"
 )
@@ -36,7 +36,7 @@ func (rc *defaultRestWeatherClient) GetForecastForCityRequest(cityLat, cityLong 
 	baseURL := rc.config.WeatherProviderClientConfig().BaseURL
 
 	url := fmt.Sprintf("%s/forecast.json?key=%s&q=%v,%v&days=%d",
-		baseURL, rc.config.WeatherProviderClientConfig().WeatherClientToken,
+		baseURL, os.Getenv(rc.config.WeatherProviderClientConfig().WeatherClientToken),
 		cityLat, cityLong, rc.config.WeatherProviderClientConfig().ForecastDays)
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
@@ -55,9 +55,7 @@ func (rc *defaultRestWeatherClient) GetForecastForCityRequest(cityLat, cityLong 
 	defer func() { _ = responses.Body.Close() }()
 
 	if responses.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(responses.Body)
-		apiError := errors.Errorf("invalid status in response getting forecast code '%d' and body '%s'",
-			responses.StatusCode, body)
+		apiError := errors.Errorf("invalid status in response getting forecast code '%d'", responses.StatusCode)
 		return response.WeatherAPIResponse{}, apiError
 	}
 
