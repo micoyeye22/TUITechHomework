@@ -4,16 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"musement/src/internal/infrastructure/providers/weather/config"
 	"musement/src/internal/infrastructure/providers/weather/internal/response"
 	"net/http"
 
 	"github.com/pkg/errors"
 )
 
-type WeatherProviderClientConfig interface {
-	BaseURL() string
-	WeatherClientToken() string
-	ForecastDays() int
+type Config interface {
+	WeatherProviderClientConfig() config.WeatherProviderClientConfig
 }
 
 type HTTPClient interface {
@@ -21,24 +20,24 @@ type HTTPClient interface {
 }
 
 type defaultRestWeatherClient struct {
-	weatherProviderClientConfig WeatherProviderClientConfig
-	httpClient                  HTTPClient
+	config     Config
+	httpClient HTTPClient
 }
 
-func NewDefaultRestWeatherClient(config WeatherProviderClientConfig, httpClient HTTPClient) *defaultRestWeatherClient {
+func NewDefaultRestWeatherClient(config Config, httpClient HTTPClient) *defaultRestWeatherClient {
 	return &defaultRestWeatherClient{
-		weatherProviderClientConfig: config,
-		httpClient:                  httpClient,
+		config:     config,
+		httpClient: httpClient,
 	}
 }
 
 func (rc *defaultRestWeatherClient) GetForecastForCityRequest(cityLat, cityLong float64) (
 	response.WeatherAPIResponse, error) {
-	baseURL := rc.weatherProviderClientConfig.BaseURL()
+	baseURL := rc.config.WeatherProviderClientConfig().BaseURL
 
 	url := fmt.Sprintf("%s/forecast.json?key=%s&q=%v,%v&days=%d",
-		baseURL, rc.weatherProviderClientConfig.WeatherClientToken(),
-		cityLat, cityLong, rc.weatherProviderClientConfig.ForecastDays())
+		baseURL, rc.config.WeatherProviderClientConfig().WeatherClientToken,
+		cityLat, cityLong, rc.config.WeatherProviderClientConfig().ForecastDays)
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {

@@ -140,9 +140,9 @@ func givenACityContract() contracts.City {
 	}
 }
 
-func givenADefaultMusementProviderWithMockedComponents() (*MockMusementProviderClientConfig, *MockHTTPClient,
+func givenADefaultMusementProviderWithMockedComponents() (*MockConfig, *MockHTTPClient,
 	*MockRestMusementClient, *MockMusementResponseMapper, *DefaultMusementProvider) {
-	mockConfig := new(MockMusementProviderClientConfig)
+	mockConfig := new(MockConfig)
 	mockHTTPClient := new(MockHTTPClient)
 	mockRestMusementClient := new(MockRestMusementClient)
 	mockMusementResponseMapper := new(MockMusementResponseMapper)
@@ -155,9 +155,9 @@ func givenADefaultMusementProviderWithMockedComponents() (*MockMusementProviderC
 	return mockConfig, mockHTTPClient, mockRestMusementClient, mockMusementResponseMapper, musementProvider
 }
 
-func givenADefaultMusementProviderWithInjectedComponents() (*MockMusementProviderClientConfig, *MockHTTPClient,
+func givenADefaultMusementProviderWithInjectedComponents() (*MockConfig, *MockHTTPClient,
 	*DefaultMusementProvider) {
-	mockConfig := new(MockMusementProviderClientConfig)
+	mockConfig := new(MockConfig)
 	mockHTTPClient := new(MockHTTPClient)
 
 	musementProvider := &DefaultMusementProvider{
@@ -168,7 +168,7 @@ func givenADefaultMusementProviderWithInjectedComponents() (*MockMusementProvide
 	return mockConfig, mockHTTPClient, musementProvider
 }
 
-func thenAssertMocksExpectations(t *testing.T, mockConfig *MockMusementProviderClientConfig,
+func thenAssertMocksExpectations(t *testing.T, mockConfig *MockConfig,
 	mockHTTPClient *MockHTTPClient, mockRestMusementClient *MockRestMusementClient,
 	mockMusementResponseMapper *MockMusementResponseMapper) {
 	mockConfig.AssertExpectations(t)

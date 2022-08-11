@@ -1,10 +1,11 @@
 package configs
 
 import (
-	"fmt"
 	"log"
 	"musement/src/internal/configs/environments"
 	"musement/src/internal/core/domain/enums"
+	musementProviderConfig "musement/src/internal/infrastructure/providers/musement/config"
+	weatherProviderConfig "musement/src/internal/infrastructure/providers/weather/config"
 	"strings"
 
 	yaml "gopkg.in/yaml.v3"
@@ -27,7 +28,6 @@ func NewConfig() *Config {
 }
 
 func setupScope(instanceScope string) enums.Scope {
-	fmt.Println("Setting Scope")
 	var currentScope enums.Scope
 	if strings.EqualFold(instanceScope, "dev") {
 		currentScope = enums.DevScope
@@ -69,4 +69,12 @@ func findConfigStringByScope(scope enums.Scope) string {
 	}
 
 	return configString
+}
+
+func (c *Config) MusementProviderClientConfig() musementProviderConfig.MusementProviderClientConfig {
+	return c.EnvConfig.MusementClientConfig
+}
+
+func (c *Config) WeatherProviderClientConfig() weatherProviderConfig.WeatherProviderClientConfig {
+	return c.EnvConfig.WeatherClientConfig
 }

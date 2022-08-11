@@ -3,6 +3,7 @@ package musement
 import (
 	"github.com/pkg/errors"
 	"musement/src/internal/core/contracts"
+	"musement/src/internal/infrastructure/providers/musement/config"
 	"musement/src/internal/infrastructure/providers/musement/internal/client"
 	"musement/src/internal/infrastructure/providers/musement/internal/mappers"
 	"musement/src/internal/infrastructure/providers/musement/internal/response"
@@ -13,8 +14,8 @@ type HTTPClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
-type MusementProviderClientConfig interface {
-	BaseURL() string
+type Config interface {
+	MusementProviderClientConfig() config.MusementProviderClientConfig
 }
 
 type restMusementClient interface {
@@ -30,7 +31,7 @@ type DefaultMusementProvider struct {
 	mapper             musementResponseMapper
 }
 
-func NewDefaultMusementProvider(config MusementProviderClientConfig, httpClient HTTPClient) *DefaultMusementProvider {
+func NewDefaultMusementProvider(config Config, httpClient HTTPClient) *DefaultMusementProvider {
 	return &DefaultMusementProvider{
 		restMusementClient: client.NewDefaultRestMusementClient(config, httpClient),
 		mapper:             mappers.NewDefaultMusementResponseMapper(),

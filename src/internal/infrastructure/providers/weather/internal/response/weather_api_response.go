@@ -1,21 +1,21 @@
 package response
 
 type WeatherAPIResponse struct {
-	Forecast Forecast
+	Forecast Forecast `json:"forecast"`
 }
 
 type Forecast struct {
-	Forecastdays []Forecastday
+	Forecastdays []Forecastday `json:"forecastday"`
 }
 
 type Forecastday struct {
-	Day Day
+	Day Day `json:"day"`
 }
 
 type Day struct {
-	Condition Condition
+	Condition Condition `json:"condition"`
 }
 
 type Condition struct {
-	Text string
+	Text string `json:"text"`
 }

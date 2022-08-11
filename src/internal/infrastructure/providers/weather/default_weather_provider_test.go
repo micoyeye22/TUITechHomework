@@ -97,9 +97,9 @@ func givenAWeatherForecastContract() contracts.WeatherForecast {
 	}
 }
 
-func givenADefaultWeatherProviderWithMockedComponents() (*MockWeatherProviderClientConfig, *MockHTTPClient,
+func givenADefaultWeatherProviderWithMockedComponents() (*MockConfig, *MockHTTPClient,
 	*MockRestWeatherClient, *MockWeatherResponseMapper, *DefaultWeatherProvider) {
-	mockConfig := new(MockWeatherProviderClientConfig)
+	mockConfig := new(MockConfig)
 	mockHTTPClient := new(MockHTTPClient)
 	mockRestWeatherClient := new(MockRestWeatherClient)
 	mockWeatherResponseMapper := new(MockWeatherResponseMapper)
@@ -112,9 +112,9 @@ func givenADefaultWeatherProviderWithMockedComponents() (*MockWeatherProviderCli
 	return mockConfig, mockHTTPClient, mockRestWeatherClient, mockWeatherResponseMapper, weatherProvider
 }
 
-func givenADefaultWeatherProviderWithInjectedComponents() (*MockWeatherProviderClientConfig, *MockHTTPClient,
+func givenADefaultWeatherProviderWithInjectedComponents() (*MockConfig, *MockHTTPClient,
 	*DefaultWeatherProvider) {
-	mockConfig := new(MockWeatherProviderClientConfig)
+	mockConfig := new(MockConfig)
 	mockHTTPClient := new(MockHTTPClient)
 
 	weatherProvider := &DefaultWeatherProvider{
@@ -125,7 +125,7 @@ func givenADefaultWeatherProviderWithInjectedComponents() (*MockWeatherProviderC
 	return mockConfig, mockHTTPClient, weatherProvider
 }
 
-func thenAssertMocksExpectations(t *testing.T, mockConfig *MockWeatherProviderClientConfig,
+func thenAssertMocksExpectations(t *testing.T, mockConfig *MockConfig,
 	mockHTTPClient *MockHTTPClient, mockRestWeatherClient *MockRestWeatherClient,
 	mockWeatherResponseMapper *MockWeatherResponseMapper) {
 	mockConfig.AssertExpectations(t)
