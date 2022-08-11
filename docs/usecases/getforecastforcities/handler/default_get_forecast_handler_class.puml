@@ -40,7 +40,7 @@ package "infrastructure.entrypoints.cmd.getforecast" {
             class defaultResponsePrinter implements responsePrinter {
                 ---
                 + {static} NewDefaultResponsePrinter() : *defaultResponsePrinter
-                + PrintCity((cityFormatted:string)
+                + PrintCity(cityFormatted:string)
             }
         }
     }
