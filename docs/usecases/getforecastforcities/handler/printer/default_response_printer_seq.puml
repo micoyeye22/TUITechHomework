@@ -1,0 +1,11 @@
+@startuml
+
+actor Caller as C
+participant defaultPrinterFormatter as DPF
+
+C -> DRF : PrintCity(cityFormatted:string)
+activate DRF
+    DRF -> DRF : fmt.Println(cityFormatted:string)
+deactivate
+
+@enduml
