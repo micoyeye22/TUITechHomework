@@ -4,7 +4,7 @@ interface GetForecastHandler {
     HandleGetForecast() : error
 }
 
-package "infrastructure.entrypoints.cmd" {
+package "infrastructure.entrypoints.cmd.getforecast" {
     class DefaultGetForecastHandler implements GetForecastHandler {
         - useCase:GetForecastForCitiesUseCase
         - responseFormatter:responseFormatter
@@ -19,7 +19,7 @@ package "infrastructure.entrypoints.cmd" {
     }
 
     -interface responseFormatter {
-        FormatCitiesForecasted(cityForecasted:models.CityForecasted) : string
+        FormatCityForcasted(cityForecasted:models.CityForecasted) : string
     }
 
     -interface responsePrinter {
@@ -32,7 +32,7 @@ package "infrastructure.entrypoints.cmd" {
                 - {static} const responseFormat:string ("Processed city %s | %s - %s")
                 ---
                 + {static} NewDefaultResponseFormatter() : *defaultResponseFormatter
-                + FormatCitiesForecasted(cityForecasted:models.CityForecasted) : string
+                + FormatCityForcasted(cityForecasted:models.CityForecasted) : string
             }
         }
 
