@@ -30,8 +30,8 @@ func StartApp() error {
 
 	buf := bufio.NewScanner(os.Stdin)
 	fmt.Print("Press ENTER to get forecast for musement cities")
-	err := defaultGetForecastHandler.HandleGetForecast()
 	buf.Scan()
+	err := defaultGetForecastHandler.HandleGetForecast()
 	if err != nil {
 		fmt.Println(err)
 	}

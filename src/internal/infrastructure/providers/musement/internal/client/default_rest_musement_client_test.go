@@ -107,7 +107,7 @@ func TestDefaultRestMusementClient_GetCitiesRequest_whenResponseHasInvalidStatus
 }
 
 func givenAResponseBodyString(t *testing.T, musementAPIResponse response.MusementAPIResponse) string {
-	responseBodyBytes, marshallErr := json.Marshal(musementAPIResponse)
+	responseBodyBytes, marshallErr := json.Marshal(musementAPIResponse.Cities)
 	require.NoError(t, marshallErr)
 	return string(responseBodyBytes)
 }
@@ -125,7 +125,7 @@ func whenGetCitiesRequestReturnsResponse(status int, musementAPIResponse respons
 		http.MethodGet,
 		httpMockURL,
 		func(req *http.Request) (resp *http.Response, e error) {
-			resp, err := httpmock.NewJsonResponse(status, musementAPIResponse)
+			resp, err := httpmock.NewJsonResponse(status, musementAPIResponse.Cities)
 			return resp, err
 		})
 }

@@ -56,9 +56,9 @@ func (rc *defaultRestMusementClient) GetCitiesRequest() (response.MusementAPIRes
 		return response.MusementAPIResponse{}, apiError
 	}
 
-	var musementAPIResponse response.MusementAPIResponse
+	var responseCities []response.City
 	decoder := json.NewDecoder(responses.Body)
-	err = decoder.Decode(&musementAPIResponse)
+	err = decoder.Decode(&responseCities)
 
-	return musementAPIResponse, err
+	return response.MusementAPIResponse{Cities: responseCities}, err
 }
