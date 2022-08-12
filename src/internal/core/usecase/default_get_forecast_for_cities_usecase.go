@@ -44,6 +44,7 @@ func (uc *DefaultGetForecastForCitiesUseCase) GetForecastForCities() ([]models.C
 
 	var forecastedCities []models.CityForecasted
 	for _, city := range cities {
+		log.Printf("getting forecast for city '%s'", city.Name)
 		weatherForecast, weatherErr := uc.weatherProvider.GetForecastForCity(city.Latitude, city.Longitude)
 		if weatherErr == nil {
 			forecastedCity := uc.forecastedCitiesFormatter.BuildForecastedCity(city, weatherForecast)
