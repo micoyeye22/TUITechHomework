@@ -1,0 +1,26 @@
+@startuml
+
+actor Caller as C
+participant DefaultMusementAPIProvider as DMAP
+participant "<<private interface>>\nrestMusementClient" as RC
+participant "<<private interface>>\nmusementResponseMapper" as M
+
+C -> DMAP : GetCities()
+activate DMAP
+    DMAP -> RC : GetCitiesRequest()
+    activate RC
+    return (musementAPIResponse:MusementAPIResponse, reqErr:error)
+    break reqErr != nil
+        DMAP --> C : interface{}, reqErr.Wrap("error making request to musementAPI")
+    end
+    DMAP -> DMAP : var cities []contracts.City
+    loop musementAPIResponse.Cities
+        DMAP -> M : ToCityContract(musementAPIResponse)
+        activate M
+        return cityContract
+        DMAP -> DMAP : cities.append(cityContract)
+    end
+    DMAP --> C : cities, nil
+deactivate
+
+@enduml

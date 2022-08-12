@@ -1,0 +1,25 @@
+@startuml
+
+package "src.internal.core.contracts"{
+    class WeatherForecast {
+        + Forecastdays:[]Forecastday
+    }
+
+    class Forecastday {
+        + Day:Day
+    }
+
+    class Day {
+        + Condition
+    }
+
+    class Condition {
+        + Text:string
+    }
+}
+
+WeatherForecast o-- Forecastday
+Forecastday -- Day
+Day -- Condition
+
+@enduml

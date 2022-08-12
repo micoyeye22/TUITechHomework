@@ -1,0 +1,14 @@
+@startuml
+
+actor Caller as C
+participant defaultRestMusementClient as RC
+participant musementAPI as A
+
+C -> RC ++: GetCitiesRequest()
+    RC -> RC: baseURL := this.config.BaseURL()\
+
+    RC -> A ++:curl --request GET \\ \
+                 \n   --url **{baseURL}**/cities
+    return response:models.MusementAPIResponse, reqErr:error
+return response, reqErr
+@enduml

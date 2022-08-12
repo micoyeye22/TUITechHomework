@@ -1,0 +1,32 @@
+@startuml
+
+actor Caller as C
+participant DefaultGetForecastForCitiesUseCase as UC
+participant MusementProvider as MP
+participant WeatherProvider as WP
+participant "<<private interface>>\nforecastedCitiesFormatter" as FCF
+
+C -> UC : GetForecastForCities()
+activate UC
+    UC -> MP : GetCities()
+    activate MP
+    return (cities:[]contracts.City, musementErr:error)
+    break musementErr != nil
+        UC --> C : nil, error.Wrap(musementErr, "error getting cities")
+    end
+    UC -> UC : var forecastedCities []CityForecasted
+    loop cities
+        UC -> WP : GetForecastForCity(city.Latitude, city.Longitude)
+        activate WP
+        return (weatherForecast:contracts.WeatherForecast, weatherErr:error)
+        alt error == nil
+            UC -> FCF : BuildForecastedCity(city, weatherForecast)
+            activate FCF
+            return forecastedCity:CityForecasted
+            UC -> UC : forecastedCities.append(forecastedCity)
+        end
+    end
+    UC --> C : forecastedCities, nil
+deactivate
+
+@enduml

@@ -1,0 +1,23 @@
+@startuml
+
+package "src.infrastructure.provider.musement.internal.response" {
+    note as n1
+        include json tags
+        in lower camelcase
+    end note
+
+    class MusementAPIResponse {
+        + Cities:[]City
+    }
+
+    class City {
+        + Id:int
+        + Name:string
+        + Latitude:float64
+        + Longitude:float64
+    }
+}
+
+MusementAPIResponse o-- City
+
+@enduml

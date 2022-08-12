@@ -1,0 +1,28 @@
+@startuml
+
+actor Caller as C
+participant DefaultGetForecastHandler as H
+participant GetForecastForCitiesUseCase as UC
+participant "<<private interface>>\nresponseFormatter" as RF
+participant "<<private interface>>\nresponsePrinter" as RP
+
+C -> H : HandleGetForecast()
+activate H
+    H -> UC : GetForecastForCities()
+    activate UC
+        H <-- UC : (citiesForecasted:[]models.CityForecasted, useCaseError:error)
+    deactivate
+    break useCaseError != nil
+        H --> C : errors.Wrap(useCaseError, "error in getForecast processing")
+    end
+    loop cityForecasted in citiesForecasted
+        H -> RF : FormatCitiesForecasted(cityForecasted)
+        activate RF
+            H <-- RF : cityFormatted:string
+        deactivate
+        H -> RP : PrintCity(cityFormatted)
+    end
+    H --> C : nil:error
+deactivate
+
+@enduml
