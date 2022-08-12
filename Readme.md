@@ -1,4 +1,5 @@
 # Musement CLI App
+#### Author: Federico Ayme
 
 This is a Go CLI App for getting the forecast printed in console for all the cities where Musement has activities to sell.
 
