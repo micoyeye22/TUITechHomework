@@ -3,7 +3,7 @@
 package getforecast
 
 import (
-	models "musement/src/internal/core/domain/models"
+	models "musement/src/internal/core/domain/entities"
 
 	mock "github.com/stretchr/testify/mock"
 )

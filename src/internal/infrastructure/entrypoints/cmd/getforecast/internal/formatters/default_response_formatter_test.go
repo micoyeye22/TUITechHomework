@@ -1,7 +1,7 @@
 package formatters
 
 import (
-	"musement/src/internal/core/domain/models"
+	"musement/src/internal/core/domain/entities"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -32,10 +32,10 @@ func TestDefaultResponseFormatter_FormatCityForcasted_success(t *testing.T) {
 	assert.Equal(t, expectedString, actualString)
 }
 
-func givenACityForecasted() models.CityForecasted {
-	return models.CityForecasted{
+func givenACityForecasted() entities.CityForecasted {
+	return entities.CityForecasted{
 		Name: testCityName,
-		Forecasts: []models.Forecast{{
+		Forecasts: []entities.Forecast{{
 			Order:       0,
 			Description: testCondition1,
 		}, {
