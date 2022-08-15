@@ -33,6 +33,10 @@ package "src.internal.infrastructure.adapters.storages.mysql" {
         }
 
         package "contracts" {
+            note as n1
+                This is the DB model being used
+                where Forecast.CityID is the ForeignKey for each City
+            end note
             class City {
                 + ID:int
                 + Name:string `gorm:"primaryKey"`
