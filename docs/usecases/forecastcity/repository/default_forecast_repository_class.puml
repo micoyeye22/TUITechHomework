@@ -1,0 +1,56 @@
+@startuml
+
+interface ForecastRepository {
+    GetForecastForCity(cityName:string) : (entities.CityForecasted, error)
+    GetForecastForCityAndDate(cityName:string, date:string) : (entities.CityForecasted, error)
+    SaveForecastedCity(entities.CityForecasted) : error
+}
+
+package "src.internal.infrastructure.adapters.storages.mysql" {
+    class DefaultForecastRepository implements ForecastRepository {
+        - gormDB:*gorm.DB
+        - mapper:cityForecastedMapper
+        ---
+        + {static} NewDefaultForecastRepository(gormDB:*gorm.DB) : *DefaultForecastRepository
+        + GetForecastForCity(cityName:string) : (entities.CityForecasted, error)
+        + GetForecastForCityAndDate(cityName:string, date:string) : (entities.CityForecasted, error)
+        + SaveForecastedCity(entities.CityForecasted) : error
+    }
+
+    -interface cityForecastedMapper {
+        ToCityForecastedEntity(contracts.CityForecasted) : entities.CityForecasted
+        ToCityForecastedContract(entities.CityForecasted) : contracts.CityForecasted
+    }
+
+    package "internal" {
+        package "mappers" {
+            -class defaultCityForecastedMapper implements cityForecastedMapper {
+                ---
+                + {static} NewDefaultCityForecastedMapper() : *defaultCityForecastedMapper
+                + ToCityForecastedEntity(contracts.CityForecasted) : entities.CityForecasted
+                + ToCityForecastedContract(entities.CityForecasted) : contracts.CityForecasted
+            }
+        }
+
+        package "contracts" {
+            class City {
+                + ID:int
+                + Name:string `gorm:"primaryKey"`
+                + Forecasts:[]Forecast
+            }
+
+            class Forecast {
+                + ID:int `gorm:"primaryKey"`
+                + Date:Date
+                + Condition:string
+                + CityID:int
+            }
+        }
+    }
+}
+
+DefaultForecastRepository - cityForecastedMapper
+defaultCityForecastedMapper . City
+City -- Forecast
+
+@enduml

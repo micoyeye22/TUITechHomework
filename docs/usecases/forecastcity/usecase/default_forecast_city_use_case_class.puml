@@ -1,0 +1,52 @@
+@startuml
+
+interface ForecastCityUseCase {
+    GetForecastedCity(cityName:string, date:string) : (entities.CityForecasted, error)
+    SetForecastedCity(cityName:string) : (entities.CityForecasted, error)
+}
+
+package "src.internal.core.usecase.forecastcity" {
+    class DefaultForecastCityUseCase implements ForecastCityUseCase {
+        - musementProvider:MusementProvider
+        - weatherProvider:WeatherProvider
+        - forecastRepository:ForecastRepository
+        - mapper:forecastCityMapper
+        ---
+        + {static} NewDefaultForecastCityUseCase(forecastRepository:ForecastRepository,\n musementProvider:MusementProvider,\n weatherProvider:WeatherProvider) : *DefaultForecastCityUseCase
+        + GetForecastedCity(cityName:string, date:string) : (entities.CityForecasted, error)
+        + SetForecastedCity(cityName:string) : (entities.CityForecasted, error)
+    }
+
+    interface ForecastRepository {
+        GetForecastForCity(cityName:string) : (entities.CityForecasted, error)
+        GetForecastForCityAndDate(cityName:string, date:string) : (entities.CityForecasted, error)
+        SaveForecastedCity(entities.CityForecasted) : error
+    }
+
+    interface MusementProvider {
+        GetCityByName(cityName:string) \n: (musementAPIResponse.contracts.City, error)
+    }
+
+    interface WeatherProvider {
+        GetForecastForCity(cityLat:float64, cityLong:float64) \n: (weatherAPIResponse.contracts.WeatherForecast, error)
+    }
+
+    -interface forecastCityMapper {
+        ToCityForecastedEntity(musementAPICity:musementAPIResponse.contracts.City,\n weatherForecast:weatherAPIResponse.contracts.WeatherForecast) : entities.CityForecasted
+    }
+
+    package "internal.mappers" {
+        -class defaultForecastCityMapper implements forecastCityMapper {
+            ---
+            + {static} NewDefaultForecastCityMapper() : *defaultForecastCityMapper
+            + ToCityForecastedEntity(musementAPICity:musementAPIResponse.contracts.City,\n weatherForecast:weatherAPIResponse.contracts.WeatherForecast) : entities.CityForecasted
+        }
+    }
+}
+
+DefaultForecastCityUseCase - ForecastRepository
+DefaultForecastCityUseCase -- MusementProvider
+DefaultForecastCityUseCase -- WeatherProvider
+DefaultForecastCityUseCase --- forecastCityMapper
+
+@enduml

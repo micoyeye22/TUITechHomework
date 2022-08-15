@@ -15,11 +15,11 @@ package "infrastructure.entrypoints.cmd.getforecast" {
     }
 
     interface GetForecastForCitiesUseCase {
-        GetForecastForCities() : ([]models.CityForecasted, error)
+        GetForecastForCities() : ([]entities.CityForecasted, error)
     }
 
     -interface responseFormatter {
-        FormatCityForcasted(cityForecasted:models.CityForecasted) : string
+        FormatCityForcasted(cityForecasted:entities.CityForecasted) : string
     }
 
     -interface responsePrinter {
@@ -32,7 +32,7 @@ package "infrastructure.entrypoints.cmd.getforecast" {
                 - {static} const responseFormat:string ("Processed city %s | %s - %s")
                 ---
                 + {static} NewDefaultResponseFormatter() : *defaultResponseFormatter
-                + FormatCityForcasted(cityForecasted:models.CityForecasted) : string
+                + FormatCityForcasted(cityForecasted:entities.CityForecasted) : string
             }
         }
 

@@ -1,0 +1,52 @@
+@startuml
+
+interface SetForecastForCityHandler {
+    SetForecastForCity(ctx:*gin.Context) : error
+}
+
+package "src.internal.infrastructure.entrypoints.api.setforecastforcity" {
+    class DefaultSetForecastForCityHandler implements SetForecastForCityHandler {
+        - mapper:cityForecastedMapper
+        - setForecastForCityUseCase:ForecastCityUseCase
+        ---
+        + {static} NewDefaultSetForecastForCityHandler(setForecastForCityUseCase:SetForecastForCityHandler) : *DefaultSetForecastForCityHandler
+        + SetForecastForCity(ctx:*gin.Context) : error
+    }
+
+    -interface cityForecastedMapper {
+        ToCityForecastResponse(cityForecasted:entities.CityForecasted) : responsemodel.CityForecasted
+    }
+
+    interface ForecastCityUseCase {
+        SetForecastedCity(cityName:string, date:string) : (entities.CityForecasted, error)
+    }
+
+    package "internal" {
+        package "mappers" {
+            -class defaultCityForecastedMapper implements cityForecastedMapper {
+                ---
+                + {static} NewDefaultCityForecastedMapper() : *defaultCityForecastedMapper
+                + ToCityForecastResponse(cityForecasted:entities.CityForecasted) : responsemodel.CityForecasted
+            }
+        }
+
+        package "responsemodel" {
+            class CityForecasted {
+                + Name:string `json:"name"`
+                + Forecasts:[]Forecast `json:"forecasts"`
+            }
+
+            class Forecast {
+                + Date:Date `json:"date"`
+                + Condition:string `json:"condition"`
+            }
+        }
+    }
+}
+
+DefaultSetForecastForCityHandler - ForecastCityUseCase
+DefaultSetForecastForCityHandler -- cityForecastedMapper
+defaultCityForecastedMapper . CityForecasted
+CityForecasted -- Forecast
+
+@enduml

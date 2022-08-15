@@ -1,0 +1,26 @@
+@startuml
+
+actor Caller as C
+participant DefaultForecastCityUseCase as UC
+participant ForecastRepository as R
+
+C -> UC : GetForecastedCity(cityName:string, date:string)
+activate UC
+    UC -> UC : var cityForecasted entities.CityForecasted{}\n var err error
+    alt strings.TrimSpace(date) == ""
+        UC -> R : GetForecastForCity(cityName)
+        activate R
+            UC <-- R : (cityForecasted, err)
+        deactivate
+    else
+        UC -> R : GetForecastForCityAndDate(cityName, date)
+         activate R
+             UC <-- R : (cityForecasted, err)
+         deactivate
+    end
+    break err != nil
+        UC --> C : cityForecasted, errors.Wrap(err, "error in getting city forecast")
+    end
+    UC --> C : cityForecasted, nil:error
+deactivate
+@enduml

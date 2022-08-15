@@ -10,7 +10,7 @@ C -> H : HandleGetForecast()
 activate H
     H -> UC : GetForecastForCities()
     activate UC
-        H <-- UC : (citiesForecasted:[]models.CityForecasted, useCaseError:error)
+        H <-- UC : (citiesForecasted:[]entities.CityForecasted, useCaseError:error)
     deactivate
     break useCaseError != nil
         H --> C : errors.Wrap(useCaseError, "error in getForecast processing")
