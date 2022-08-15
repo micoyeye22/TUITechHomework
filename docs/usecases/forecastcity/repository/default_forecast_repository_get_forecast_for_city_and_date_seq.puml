@@ -1,0 +1,26 @@
+@startuml
+
+actor Caller as C
+participant DefaultForecastRepository as R
+database CityForecastDB as DB
+participant cityForecastedMapper as M
+
+C -> R : GetForecastForCity(cityID:string, date:string)
+activate R
+    R -> DB : SELECT * FROM {cityTableName} JOIN {forecastTableName}\n WHERE city.ID = **cityID**\n AND forecast.Date = **date**
+    note top: implement using gorm
+    R <-- DB : (cityContract:contracts.CityForecasted, dbError:error)
+    break dbError != nil
+        R --> C : contracts.CityForecasted{}, errors.Wrapf(dbError,\n "error getting city information with ID '%s' and date '%s'", cityID, date)
+    end
+    alt resultRows == 0
+        R --> C : contracts.CityForecasted{}, nil:error
+    end
+    R -> M : ToCityForecastedEntity(cityContract)
+    activate M
+        R <-- M : cityForecastedModel:entities.CityForecasted
+    deactivate
+    R --> C : cityForecastedModel, nil:error
+deactivate
+
+@enduml

@@ -23,14 +23,14 @@ package "src.usecase" {
     }
 
     -interface forecastedCitiesFormatter {
-        + BuildForecastedCity(\n city:contracts.City,\n weatherForecast:contracts.WeatherForecast) : models.CityForecasted
+        + BuildForecastedCity(\n city:contracts.City,\n weatherForecast:contracts.WeatherForecast) : entities.CityForecasted
     }
 
     package "internal.formatter" {
         class defaultForecastedCitiesFormatter implements forecastedCitiesFormatter {
             ---
             + {static} NewDefaultForecastedCitiesFormatter() : *defaultForecastedCitiesFormatter
-            + BuildForecastedCity(\n city:contracts.City,\n weatherForecast:contracts.WeatherForecast) : models.CityForecasted
+            + BuildForecastedCity(\n city:contracts.City,\n weatherForecast:contracts.WeatherForecast) : entities.CityForecasted
         }
     }
 }

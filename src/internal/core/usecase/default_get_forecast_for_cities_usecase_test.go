@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"musement/src/internal/core/contracts"
-	"musement/src/internal/core/domain/models"
+	"musement/src/internal/core/domain/entities"
 	"musement/src/internal/core/usecase/internal/formatter"
 	"testing"
 
@@ -85,7 +85,7 @@ func TestDefaultGetForecastForCitiesUseCase_GetForecastForCities_whenThereAreNoC
 
 	cities := givenACitiesArray(0)
 
-	expectedForecastedCitiesArray := givenAForecastedCitiesArray(0, models.CityForecasted{})
+	expectedForecastedCitiesArray := givenAForecastedCitiesArray(0, entities.CityForecasted{})
 
 	mockMusementProvider.On("GetCities").Return(cities, nil)
 
@@ -135,26 +135,26 @@ func TestDefaultGetForecastForCitiesUseCase_GetForecastForCities_whenWeatherProv
 	thenAssertMocksExpectations(t, mockMusementProvider, mockWeatherProvider, mockForecastedCitiesFormatter)
 }
 
-func givenACityForecasted(days int) models.CityForecasted {
-	var forecasts []models.Forecast
+func givenACityForecasted(days int) entities.CityForecasted {
+	var forecasts []entities.Forecast
 	for i := 0; i < days; i++ {
 		forecasts = append(forecasts, givenAForecastModel(i))
 	}
-	return models.CityForecasted{
+	return entities.CityForecasted{
 		Name:      testCityName,
 		Forecasts: forecasts,
 	}
 }
 
-func givenAForecastModel(order int) models.Forecast {
-	return models.Forecast{
+func givenAForecastModel(order int) entities.Forecast {
+	return entities.Forecast{
 		Order:       order,
 		Description: testConditionText,
 	}
 }
 
-func givenAForecastedCitiesArray(cities int, cityForecasted models.CityForecasted) []models.CityForecasted {
-	var citiesForcastedArray []models.CityForecasted
+func givenAForecastedCitiesArray(cities int, cityForecasted entities.CityForecasted) []entities.CityForecasted {
+	var citiesForcastedArray []entities.CityForecasted
 	for i := 0; i < cities; i++ {
 		citiesForcastedArray = append(citiesForcastedArray, cityForecasted)
 	}

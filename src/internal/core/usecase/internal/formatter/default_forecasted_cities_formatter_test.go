@@ -2,7 +2,7 @@ package formatter
 
 import (
 	"musement/src/internal/core/contracts"
-	"musement/src/internal/core/domain/models"
+	"musement/src/internal/core/domain/entities"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -95,20 +95,20 @@ func givenACondition() contracts.Condition {
 	}
 }
 
-func givenAnExpectedCityForecasted(days int) models.CityForecasted {
-	var forecasts []models.Forecast
+func givenAnExpectedCityForecasted(days int) entities.CityForecasted {
+	var forecasts []entities.Forecast
 	for i := 0; i < days; i++ {
 		forecasts = append(forecasts, givenAForecastModel(i))
 	}
 
-	return models.CityForecasted{
+	return entities.CityForecasted{
 		Name:      testCityName,
 		Forecasts: forecasts,
 	}
 }
 
-func givenAForecastModel(order int) models.Forecast {
-	return models.Forecast{
+func givenAForecastModel(order int) entities.Forecast {
+	return entities.Forecast{
 		Order:       order,
 		Description: testConditionText,
 	}
