@@ -1,0 +1,40 @@
+@startuml
+
+actor Caller as C
+participant DefaultForecastCityUseCase as UC
+participant MusementProvider as MP
+participant WeatherProvider as WP
+participant forecastCityMapper as M
+participant ForecastRepository as R
+
+C -> UC : SetForecastedCity(cityID:string)
+activate UC
+    UC -> MP : GetCityByName(cityID:string)
+    activate MP
+        UC <-- MP : (city:musementAPIResponse.contracts.City, musementErr:error)
+    deactivate
+    break musementErr != nil
+        UC --> C : entities.CityForecasted{}, errors.Wrapf(musementErr,\n "error setting forecast for city '%s', error getting city information", cityID)
+    end
+    UC -> WP : GetForecastForCity(city.Latitude, city.Longitude)
+    activate WP
+        UC <-- WP : (weather:weatherAPIResponse.contracts.WeatherForecast, weatherErr:error)
+    deactivate
+    break weatherErr != nil
+        UC --> C : entities.CityForecasted{}, errors.Wrapf(weatherErr,\n error "error setting forecast for city '%s', error getting weather information", cityID)
+    end
+    UC -> M : ToCityForecastedEntity(city, weather)
+    activate M
+        UC <-- M : cityForecasted:entities.CityForecasted
+    deactivate
+    UC -> R : SaveForecastedCity(cityForecasted)
+    activate R
+        UC <-- R : repositoryErr:error
+    deactivate
+    break repositoryErr != nil
+        UC --> C :  entities.CityForecasted{}, errors.Wrapf(repositoryErr,\n "error setting forecast for city '%s', error saving in repository")
+    end
+    UC --> C : cityForecasted, nil:error
+deactivate
+
+@enduml

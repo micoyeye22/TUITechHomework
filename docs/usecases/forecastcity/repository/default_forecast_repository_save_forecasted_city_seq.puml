@@ -1,0 +1,23 @@
+@startuml
+
+actor Caller as C
+participant DefaultForecastRepository as R
+participant cityForecastedMapper as M
+database CityForecastDB as DB
+
+C -> R : SaveForecastedCity(city:entities.CityForecasted)
+activate R
+    R -> M : ToCityForecastedContract(city)
+    activate M
+        R <-- M : cityContract:contracts.CityForecasted
+    deactivate
+    R -> DB : INSERT **cityContract**
+    note top: implement using gorm
+    R <-- DB : dbError:error
+    break dbError != nil
+        R --> C : errors.Wrapf(dbError,\n "error saving in database city with name '%s'", city.Name)
+    end
+    R --> C : nil:error
+deactivate
+
+@enduml

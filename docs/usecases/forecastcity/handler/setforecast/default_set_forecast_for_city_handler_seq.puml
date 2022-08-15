@@ -1,0 +1,34 @@
+@startuml
+
+actor Caller as C
+participant DefaultSetForecastForCityHandler as H
+participant ForecastCityUseCase as UC
+participant "<<private interface>>\ncityForecastedMapper" as M
+
+C -> H : SetForecastForCity(ctx:*gin.Context)
+activate H
+    H -> H : cityID := ctx.Param("cityID")
+    break strings.TrimSpace(cityID) == ""
+        H -> H : ctx.JSON(http.StatusBadRequest, interface{})
+        H --> C : errors.New("cityID can't be null")
+    end
+    H -> UC : SetForecastedCity(cityID:string)
+    activate UC
+        H <-- UC : (cityForecastedModel:entities.CityForecasted, useCaseErr:error)
+    deactivate
+    break useCaseErr != nil
+        H -> H : ctx.JSON(http.StatusInternalServerError, interface{})
+        H --> C : errors.Wrapf(useCaseErr, "error setting forecast for cityID '%s'", cityID)
+    end
+    alt strings.TrimSpace(cityForecastedModel.Name) == ""
+        H -> H : (http.StatusNotFound, interface{})
+    end
+    H -> M : ToCityForecastResponse(cityForecastedModel)
+    activate M
+        H <-- M : cityForecastedResponse:responsemodel.CityForecasted
+    deactivate
+    H -> H : ctx.JSON(http.StatusOK, cityForecastedResponse)
+    H --> C : nil:error
+deactivate
+
+@enduml

@@ -3,7 +3,7 @@
 actor Caller as C
 participant defaultResponseFormatter as DRF
 
-C -> DRF : FormatCitiesForecasted(cityForecasted:models.CityForecasted)
+C -> DRF : FormatCitiesForecasted(cityForecasted:entities.CityForecasted)
 activate DRF
     DRF --> C : fmt.Sprintf(this.responseFormat, \n cityForecasted.Name, cityForecasted.Forecast[0].Description, cityForecasted.Forecast[1].Description)
 deactivate
