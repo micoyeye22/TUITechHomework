@@ -4,16 +4,16 @@ actor Caller as C
 participant DefaultForecastCityUseCase as UC
 participant ForecastRepository as R
 
-C -> UC : GetForecastedCity(cityName:string, date:string)
+C -> UC : GetForecastedCity(cityID:string, date:string)
 activate UC
     UC -> UC : var cityForecasted entities.CityForecasted{}\n var err error
     alt strings.TrimSpace(date) == ""
-        UC -> R : GetForecastForCity(cityName)
+        UC -> R : GetForecastForCity(cityID)
         activate R
             UC <-- R : (cityForecasted, err)
         deactivate
     else
-        UC -> R : GetForecastForCityAndDate(cityName, date)
+        UC -> R : GetForecastForCityAndDate(cityID, date)
          activate R
              UC <-- R : (cityForecasted, err)
          deactivate

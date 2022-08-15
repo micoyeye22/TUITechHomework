@@ -7,21 +7,21 @@ participant WeatherProvider as WP
 participant forecastCityMapper as M
 participant ForecastRepository as R
 
-C -> UC : SetForecastedCity(cityName:string)
+C -> UC : SetForecastedCity(cityID:string)
 activate UC
-    UC -> MP : GetCityByName(cityName:string)
+    UC -> MP : GetCityByName(cityID:string)
     activate MP
         UC <-- MP : (city:musementAPIResponse.contracts.City, musementErr:error)
     deactivate
     break musementErr != nil
-        UC --> C : entities.CityForecasted{}, errors.Wrapf(musementErr,\n "error setting forecast for city '%s', error getting city information", cityName)
+        UC --> C : entities.CityForecasted{}, errors.Wrapf(musementErr,\n "error setting forecast for city '%s', error getting city information", cityID)
     end
     UC -> WP : GetForecastForCity(city.Latitude, city.Longitude)
     activate WP
         UC <-- WP : (weather:weatherAPIResponse.contracts.WeatherForecast, weatherErr:error)
     deactivate
     break weatherErr != nil
-        UC --> C : entities.CityForecasted{}, errors.Wrapf(weatherErr,\n error "error setting forecast for city '%s', error getting weather information", cityName)
+        UC --> C : entities.CityForecasted{}, errors.Wrapf(weatherErr,\n error "error setting forecast for city '%s', error getting weather information", cityID)
     end
     UC -> M : ToCityForecastedEntity(city, weather)
     activate M

@@ -1,8 +1,8 @@
 @startuml
 
 interface ForecastCityUseCase {
-    GetForecastedCity(cityName:string, date:string) : (entities.CityForecasted, error)
-    SetForecastedCity(cityName:string) : (entities.CityForecasted, error)
+    GetForecastedCity(cityID:string, date:string) : (entities.CityForecasted, error)
+    SetForecastedCity(cityID:string) : (entities.CityForecasted, error)
 }
 
 package "src.internal.core.usecase.forecastcity" {
@@ -13,18 +13,18 @@ package "src.internal.core.usecase.forecastcity" {
         - mapper:forecastCityMapper
         ---
         + {static} NewDefaultForecastCityUseCase(forecastRepository:ForecastRepository,\n musementProvider:MusementProvider,\n weatherProvider:WeatherProvider) : *DefaultForecastCityUseCase
-        + GetForecastedCity(cityName:string, date:string) : (entities.CityForecasted, error)
-        + SetForecastedCity(cityName:string) : (entities.CityForecasted, error)
+        + GetForecastedCity(cityID:string, date:string) : (entities.CityForecasted, error)
+        + SetForecastedCity(cityID:string) : (entities.CityForecasted, error)
     }
 
     interface ForecastRepository {
-        GetForecastForCity(cityName:string) : (entities.CityForecasted, error)
-        GetForecastForCityAndDate(cityName:string, date:string) : (entities.CityForecasted, error)
+        GetForecastForCity(cityID:string) : (entities.CityForecasted, error)
+        GetForecastForCityAndDate(cityID:string, date:string) : (entities.CityForecasted, error)
         SaveForecastedCity(entities.CityForecasted) : error
     }
 
     interface MusementProvider {
-        GetCityByName(cityName:string) \n: (musementAPIResponse.contracts.City, error)
+        GetCityByID(cityID:string) \n: (musementAPIResponse.contracts.City, error)
     }
 
     interface WeatherProvider {

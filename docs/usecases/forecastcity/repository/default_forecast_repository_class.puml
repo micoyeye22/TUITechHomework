@@ -1,8 +1,8 @@
 @startuml
 
 interface ForecastRepository {
-    GetForecastForCity(cityName:string) : (entities.CityForecasted, error)
-    GetForecastForCityAndDate(cityName:string, date:string) : (entities.CityForecasted, error)
+    GetForecastForCity(cityID:string) : (entities.CityForecasted, error)
+    GetForecastForCityAndDate(cityID:string, date:string) : (entities.CityForecasted, error)
     SaveForecastedCity(entities.CityForecasted) : error
 }
 
@@ -12,8 +12,8 @@ package "src.internal.infrastructure.adapters.storages.mysql" {
         - mapper:cityForecastedMapper
         ---
         + {static} NewDefaultForecastRepository(gormDB:*gorm.DB) : *DefaultForecastRepository
-        + GetForecastForCity(cityName:string) : (entities.CityForecasted, error)
-        + GetForecastForCityAndDate(cityName:string, date:string) : (entities.CityForecasted, error)
+        + GetForecastForCity(cityID:string) : (entities.CityForecasted, error)
+        + GetForecastForCityAndDate(cityID:string, date:string) : (entities.CityForecasted, error)
         + SaveForecastedCity(entities.CityForecasted) : error
     }
 

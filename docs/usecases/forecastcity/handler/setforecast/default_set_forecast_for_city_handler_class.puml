@@ -18,7 +18,7 @@ package "src.internal.infrastructure.entrypoints.api.setforecastforcity" {
     }
 
     interface ForecastCityUseCase {
-        SetForecastedCity(cityName:string, date:string) : (entities.CityForecasted, error)
+        SetForecastedCity(cityID:string) : (entities.CityForecasted, error)
     }
 
     package "internal" {
