@@ -1,7 +1,7 @@
 package getforecast
 
 import (
-	"musement/src/internal/core/domain/models"
+	"musement/src/internal/core/domain/entities"
 	"musement/src/internal/infrastructure/entrypoints/cmd/getforecast/internal/formatters"
 	"musement/src/internal/infrastructure/entrypoints/cmd/getforecast/internal/printers"
 
@@ -9,11 +9,11 @@ import (
 )
 
 type GetForecastForCitiesUseCase interface {
-	GetForecastForCities() ([]models.CityForecasted, error)
+	GetForecastForCities() ([]entities.CityForecasted, error)
 }
 
 type responseFormatter interface {
-	FormatCityForcasted(cityForecasted models.CityForecasted) string
+	FormatCityForcasted(cityForecasted entities.CityForecasted) string
 }
 
 type responsePrinter interface {

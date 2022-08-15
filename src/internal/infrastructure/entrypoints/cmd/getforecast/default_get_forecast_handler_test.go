@@ -1,7 +1,7 @@
 package getforecast
 
 import (
-	"musement/src/internal/core/domain/models"
+	"musement/src/internal/core/domain/entities"
 	"musement/src/internal/infrastructure/entrypoints/cmd/getforecast/internal/formatters"
 	"musement/src/internal/infrastructure/entrypoints/cmd/getforecast/internal/printers"
 	"testing"
@@ -48,7 +48,7 @@ func TestDefaultGetForecastHandler_HandleGetForecast_whenUseCaseFailsThenReturns
 
 	useCaseErr := errors.New("error in useCase")
 	expectedErrorMessage := "error in getForecast processing"
-	var citiesForecasted []models.CityForecasted
+	var citiesForecasted []entities.CityForecasted
 
 	mockUseCase.On("GetForecastForCities").Return(citiesForecasted, useCaseErr)
 
@@ -60,11 +60,11 @@ func TestDefaultGetForecastHandler_HandleGetForecast_whenUseCaseFailsThenReturns
 	thenAssertMockExpectations(t, mockUseCase, mockResponseFormatter, mockResponsePrinter)
 }
 
-func givenACityForecastArray() []models.CityForecasted {
-	return []models.CityForecasted{
+func givenACityForecastArray() []entities.CityForecasted {
+	return []entities.CityForecasted{
 		{
 			Name: testCityName,
-			Forecasts: []models.Forecast{
+			Forecasts: []entities.Forecast{
 				{
 					Order:       0,
 					Description: testForecast,

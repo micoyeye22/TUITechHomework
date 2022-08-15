@@ -1,4 +1,4 @@
-package models
+package entities
 
 type CityForecasted struct {
 	Name      string
